@@ -1,3 +1,3 @@
 # CO_project
-To start coding click on "code" button on right side then click on codespaces -> CO project
+To start coding goto,
 <code> ->  CodeSpaces -> COproject -> start coding.
