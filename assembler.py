@@ -132,7 +132,7 @@ def check_A(k):
         print("Wrong register name")
         return 1
     if k[1]=="FLAGS" or k[2]=="FLAGS" or k[3]=="FLAGS":
-        print("FLAGS used incorrectly")
+        print("Wrong use of flags")
     return 0
 
 def check_mov(k):
@@ -166,7 +166,7 @@ def check_B(k):
         print("Wrong register name")
         return 1
     if k[1]=="FLAGS":
-        print("FLAGS used incorrectly")
+        print("Wrong use of flags")
         return 1 
     return 0
 
@@ -175,7 +175,7 @@ def check_C(k):
         print("Wrong instruction for TYPE C register")
         return 1
     if k[1]=="FLAGS" or k[2]=="FLAGS":
-        print("Invalid use of FLAGS register")
+        print("Wrong use of flags")
         return 1
     if k[1] not in R or k[2] not in R:
         print("Wrong register names")
@@ -187,7 +187,7 @@ def check_D(k):
         print("Wrong instruction for TYPE D register")
         return 1
     if k[1]=="FLAGS":
-        print("Invalid use of FLAGS register")
+        print("Wrong use of flags")
         return 1
     if k[1] not in R:
         print("Wrong register names")
@@ -202,7 +202,8 @@ def check_E(k):
 def check_F(k):
     if (len(k[0]) != 1):
             print("Wrong instruction for TYPE F register")
-            return True
+            return 1
+    return 0
 def error_controller(k):
     l2=[]
     if k[-1]=='\n':
