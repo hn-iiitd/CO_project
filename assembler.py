@@ -138,7 +138,8 @@ def check_space(k):
 def check_A(k):
     global counter
     if len(k) != 4:
-        print(f"Error: Wrong instruction syntax for TYPE A register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE A register in line {counter}")
         exit()
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
@@ -154,7 +155,8 @@ def check_mov(k):
     global counter
     if k[-1][0] == '$':
         if len(k) != 3:
-            print(f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
+            print(
+                f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
             exit()
 
         if k[1] == "FLAGS" or k[2] == "FLAGS":
@@ -167,7 +169,8 @@ def check_mov(k):
 
     else:
         if len(k) != 3:
-            print(f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
+            print(
+                f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
             exit()
 
         if k[1] == "FLAGS":
@@ -182,7 +185,8 @@ def check_mov(k):
 def check_B(k):
     global counter
     if len(k) != 3:
-        print(f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
         exit()
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
@@ -197,7 +201,8 @@ def check_B(k):
 def check_C(k):
     global counter
     if len(k) != 3:
-        print(f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
         exit()
 
     if k[1] == "FLAGS" or k[2] == "FLAGS":
@@ -212,7 +217,8 @@ def check_C(k):
 def check_D(k):
     global counter
     if len(k) != 3:
-        print(f"Error: Wrong instruction syntax for TYPE D register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE D register in line {counter}")
         exit()
 
     if k[1] == "FLAGS":
@@ -228,7 +234,8 @@ def check_E(k):
     global counter
     if len(k) != 2:
 
-        print(f"Error: Wrong instruction syntax for TYPE E register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE E register in line {counter}")
         exit()
 
 
@@ -236,14 +243,15 @@ def check_F(k):
     global counter
     if (len(k) != 1):
 
-        print(f"Error: Wrong instruction syntax for TYPE F register in line {counter}")
+        print(
+            f"Error: Wrong instruction syntax for TYPE F register in line {counter}")
         exit()
 
 
 c_hlt = 0
 counter = 0
 flag = 0
-check_hlt_after=0
+check_hlt_after = 0
 
 
 def error_controller(k):
@@ -287,13 +295,13 @@ def error_controller(k):
             flag = 1
             c_hlt += 1
             if c_hlt == 1:
-                check_hlt_after=counter
+                check_hlt_after = counter
                 (check_F(l))
             elif c_hlt > 1:
                 print("hlt operation used more than once")
                 exit()
     else:
-        print("Incorrect operation") 
+        print("Incorrect operation")
 
 
 file = "test.txt"
