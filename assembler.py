@@ -294,7 +294,7 @@ def error_controller(k):
                 exit()
     else:
         print("Incorrect operation")
-
+print("d")
 
 
 file = "test.txt"
