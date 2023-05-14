@@ -1,0 +1,15 @@
+var X
+Start:
+
+    mov R1 $10
+    var Y
+
+
+    mov R2 $100
+
+    mul R3 R2 R1
+    cmp R1 R2
+    st R3 Y
+    add R3 R2 R1
+End:
+    hlt
