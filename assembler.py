@@ -209,7 +209,7 @@ def check_D(k):
         print("Wrong register names")
         exit()
         
-    
+print("yo")
 
 def check_E(k):
     if len(k)!=2:
