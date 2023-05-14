@@ -293,8 +293,7 @@ def error_controller(k):
                 print("hlt operation used more than once")
                 exit()
     else:
-        print("Incorrect operation")
-print("d")
+        print("Incorrect operation") 
 
 
 file = "test.txt"
