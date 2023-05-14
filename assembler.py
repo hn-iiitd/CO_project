@@ -121,127 +121,150 @@ l_result=[]
 def check_space(k):
     if '' in k:
         print("Error: space")
-        return 1
-    else:
-        return 0
+        exit()
+
 def check_A(k):
     if len(k)!=4:
         print("Wrong instruction for TYPE A register")
-        return 1
+        exit()
+
     if (k[1] not in R or k[2] not in R or k[3] not in R):
         print("Wrong register name")
-        return 1
+        exit()
+        
     if k[1]=="FLAGS" or k[2]=="FLAGS" or k[3]=="FLAGS":
         print("Wrong use of flags")
-    return 0
+        exit()
+    
 
 def check_mov(k):
-    if k[2][0]=='$':
+    if k[-1][0]=='$':
         if len(k)!=3:
             print("Wrong instruction in TYPE B registers")
-            return 1
+            exit()
+            
         if k[1]=="FLAGS" or k[2]=="FLAGS":
             print("Wrong use of flags")
-            return 1
+            exit()
+            
         if k[1] not in R:
             print("Wrong register")
-            return 1
+            exit()
+            
     else:
         if len(k)!=3:
             print("Wrong instruction in TYPE C registers")
-            return 1
+            exit()
+            
         if k[1]=="FLAGS":
             print("Wrong use of flags")
-            return 1
+            exit()
+            
         if k[1] not in R or k[2] not in R:
             print("Wrong register")
-            return 1
-    return 0
+            exit()
+            
+    
         
 def check_B(k):
     if len(k)!=3:
         print("Wrong instruction for TYPE B register")
-        return 1
+        exit()
+        
     if (k[1] not in R or k[2] not in R or k[3] not in R):
         print("Wrong register name")
-        return 1
+        exit()
+        
     if k[1]=="FLAGS":
         print("Wrong use of flags")
-        return 1 
-    return 0
+        exit()
+         
+    
 
 def check_C(k):
     if len(k)!=3:
         print("Wrong instruction for TYPE C register")
-        return 1
+        exit()
+        
     if k[1]=="FLAGS" or k[2]=="FLAGS":
         print("Wrong use of flags")
-        return 1
+        exit()
+        
     if k[1] not in R or k[2] not in R:
         print("Wrong register names")
-        return 1
-    return 0
+        exit()
+        
+    
 
 def check_D(k):
     if len(k)!=3:
         print("Wrong instruction for TYPE D register")
-        return 1
+        exit()
+        
     if k[1]=="FLAGS":
         print("Wrong use of flags")
-        return 1
+        exit()
+        
     if k[1] not in R:
         print("Wrong register names")
-        return 1
-    return 0
+        exit()
+        
+    
 
 def check_E(k):
     if len(k)!=2:
         print("Wrong instruction for TYPE E register")
-        return 1
+        exit()
+        
     
 def check_F(k):
-    if (len(k[0]) != 1):
+    
+    if (len(k) != 1):
             print("Wrong instruction for TYPE F register")
-            return 1
-    return 0
+            exit()
+            
+    
+c_hlt=0
 def error_controller(k):
-    l2=[]
+    global c_hlt
     if k[-1]=='\n':
         k=k[:-1]
     l=k.strip().split(" ")
     if l==['']:
         return
-    print(l)
-    if (l[0] in O or l[0]=='var'):
-        l_result.append(check_space(l))
+    if (l[0] in O or l[0]=='var' or l[0][-1]==':'):
+        (check_space(l))
+        
         if l[0]=="mov":
-            l_result.append(check_mov(l))
-        if l[0] in O_A:
-            l_result.append(check_A(l))
+            (check_mov(l))
+        elif l[0] in O_A:
+            (check_A(l))
         elif l[0] in O_B:
-            l_result.append(check_B(l))
+            (check_B(l))
         elif l[0] in O_C:
-            l_result.append(check_C(l))
+            (check_C(l))
         elif l[0] in O_D:
-            l_result.append(check_D(l))
+            (check_D(l))
         elif l[0] in O_E:
-            l_result.append(check_E(l))
-        else:
-            l_result.append(check_F(l))
+            (check_E(l))
+        elif l[0] in O_F:
+            c_hlt+=1
+            if c_hlt==1:
+                (check_F(l))
+            elif c_hlt>1:
+                print("hlt operation used more than once")
+                exit()
     else:
         print("Incorrect operation")
-        l_result.append(1)
+        (1)
     return l_result
 
 file = "test.txt"
 f = open(file,'r')
 # out = open("out.txt",'w+')
 for line in f:
-    ctrl=error_controller(line)
-if 1 in ctrl:
-    print("ENDED")
-else:
-    file_work() 
+    error_controller(line)
+file_work()
 f.close()
 # f.seek(0)
 
