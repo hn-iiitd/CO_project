@@ -9,7 +9,7 @@ O_F = {"hlt": "11010"}
 O = ["add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div",
      "not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"]
 variables = {}
-
+print("hello")
 
 def add(r1, r2):
     sum = bin(int(r1) + int(r2))
