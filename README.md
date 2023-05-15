@@ -9,7 +9,7 @@ the assembler will read the code from input_file_name.txt and print the output i
 
 Individual Contributions:-
 Roll No.     Name                       Contributions
-2022190    Guneet Pal Singh       Error Handling, code for conversion of Type-B to binary
+2022190    Guneet Pal Singh       Error Handling, code for conversion of Type- B to binary
 2022199    Harsh Nangia           Error Handling , code for conversion of Type- A to Binary
 2022220    Idhant Arora           Conversion of Type C and E to Binary
 2022280    Manveet Singh          Conversion of Type D and F to Binary
