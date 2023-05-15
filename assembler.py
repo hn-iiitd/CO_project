@@ -9,7 +9,7 @@ O_F = {"hlt": "11010"}
 O = ["add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div",
      "not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"]
 variables = {}
-print("hello")
+
 
 def add(r1, r2):
     sum = bin(int(r1) + int(r2))
@@ -287,6 +287,37 @@ check_hlt_after = 0
 l_result=[]
 l_cmd=[]
 l_var=[]
+l_var_def=[]
+def var(k):
+    if k[-1] == '\n':
+        k = k[:-1]
+    
+    l = k.strip().split(" ")
+    l_cmd.append(l[0])
+    if l == ['']:
+        return
+    if (l[0] in O or l[0] == 'var' or l[0][-1] == ':'):
+        # if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je" :
+        #     l_var.append(l[1])
+        # elif l[0]=="ld" or l[0]=="st":
+
+        #     l_var.append(l[2])
+        if l[0]=='var':
+            l_var_def.append(l[1])
+        elif l[0][-1]==':':
+            l_var_def.append(l[0][:-1])
+def check_var_def(k):    
+    global counter
+    if k not in l_var_def:
+        print(f"Error on line {counter}:Label not find ")
+        return 1
+    return 0
+    # for i in l_var_def:
+    #     if i!=k:
+
+        # if i not in l_var_def:
+        #     print("Label not defined")
+        #     a.append(1)
 def error_controller(k):
     global c_hlt
     global l_cmd
@@ -294,7 +325,7 @@ def error_controller(k):
     global flag
     global check_hlt_after
     global l_result
-    global l_var
+    global l_var,l_var_def
     if k[-1] == '\n':
         k = k[:-1]
     
@@ -307,10 +338,14 @@ def error_controller(k):
         counter += 1
         if flag == 1 and l[0] == 'var':
             print(f"Var statement used after instruction at line {counter}")
+            l_result.append(1)
             #exit()
         l_result.append(check_space(l))
-        if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je":
-            l_var.append(l[1])
+        if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je" :
+            l_result.append(check_var_def(l[1]))
+        elif l[0]=="ld" or l[0]=="st":
+
+            l_result.append(check_var_def(l[2]))
 
         if l[0] == "mov":
             flag = 1
@@ -348,18 +383,23 @@ def error_controller(k):
     
     return l_result
     
-
+def check_hlt():
+    if 'hlt'!=l_cmd[-1]:
+        print("hlt not the last command")
+        a.append(1)
 
 file = "test.txt"
 f = open(file, 'r')
 
-
+for line in f:
+    var(line)
+f.seek(0)
 for line in f:
     a=error_controller(line)
+# print(list(set(l_var)))
+# print(list(set(l_var_def)))
+check_hlt()
 
-if 'hlt'!=l_cmd[-1]:
-    print("hlt not the last command")
-    a.append(1)
 
 if 1 not in a:
     file_work()
