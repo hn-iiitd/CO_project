@@ -1,4 +1,5 @@
-please view this file in code section for better view
+<pre>
+Please view this file in code section for better view.
 assembler.py is the main assembler file.
 Change the input file name from line no. 65 in     file =  "input_file_name.txt" 
 change the output file name from    out = open("output_file_name.txt","w")
@@ -12,3 +13,4 @@ Roll No.     Name                       Contributions
 2022199    Harsh Nangia           Error Handling , code for conversion of Type- A to Binary
 2022220    Idhant Arora           Conversion of Type C and E to Binary
 2022280    Manveet Singh          Conversion of Type D and F to Binary
+<pre/>
