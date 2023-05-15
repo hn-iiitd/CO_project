@@ -1,8 +1,6 @@
 # Dictionaries for all types of instructions.
-R = {'R0': "000", 'R1': "001", 'R2': "010", "R3": "011",
-     "R4": "100", "R5": "101", "R6": "110", "FLAGS": "111"}
-O_A = {"add": "00000", "sub": "00001", "mul": "00110",
-       "xor": "01010", "or": "01011", "and": "01100"}
+R = {'R0': "000", 'R1': "001", 'R2': "010", "R3": "011","R4": "100", "R5": "101", "R6": "110", "FLAGS": "111"}
+O_A = {"add": "00000", "sub": "00001", "mul": "00110","xor": "01010", "or": "01011", "and": "01100"}
 O_B = {"mov": "00010", "rs": "01000", "ls": "01001"}
 O_C = {"mov": "00011", "div": "00111", "not": "01101", "cmp": "01110"}
 O_D = {"ld": "00100", "st": "00101"}
@@ -132,7 +130,9 @@ def check_space(k):
     global counter
     if '' in k:
         print(f"Error: Extra space in line {counter}")
-        exit()
+        return 1
+    return 0
+        #exit()
 
 
 def check_A(k):
@@ -140,15 +140,21 @@ def check_A(k):
     if len(k) != 4:
         print(
             f"Error: Wrong instruction syntax for TYPE A register in line {counter}")
-        exit()
+        return 1
+    # return 0
+        #exit()
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
         print(f"Error: Incorrect Register name in line {counter}")
-        exit()
+        return 1
+
+        #exit()
 
     if k[1] == "FLAGS" or k[2] == "FLAGS" or k[3] == "FLAGS":
         print(f"Incorrect use of FLAGS register in line {counter}")
-        exit()
+        #exit()
+        return 1
+    return 0
 
 
 def check_mov(k):
@@ -157,29 +163,38 @@ def check_mov(k):
         if len(k) != 3:
             print(
                 f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
-            exit()
+            return 1
+            #exit()
 
         if k[1] == "FLAGS" or k[2] == "FLAGS":
             print(f"Incorrect use of FLAGS register in line {counter}")
-            exit()
+            return 1
+            #exit()
 
         if k[1] not in R:
             print(f"Error: Incorrect Register name in line {counter}")
-            exit()
+            #exit()
+            return 1
+            
 
     else:
         if len(k) != 3:
             print(
                 f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
-            exit()
+            return 1
+            #exit()
 
         if k[1] == "FLAGS":
             print(f"Incorrect use of FLAGS register in line {counter}")
-            exit()
+            #exit()
+            return 1
 
         if k[1] not in R or k[2] not in R:
             print(f"Error: Incorrect Register name in line {counter}")
-            exit()
+            #exit()
+            return 1
+        
+    return 0
 
 
 def check_B(k):
@@ -187,31 +202,39 @@ def check_B(k):
     if len(k) != 3:
         print(
             f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
-        exit()
+        #exit()
+        return 1
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
         print(f"Error: Incorrect Register name in line {counter}")
-        exit()
+        #exit()
+        return 1
 
     if k[1] == "FLAGS":
         print(f"Incorrect use of FLAGS register in line {counter}")
-        exit()
-
+        #exit()
+        return 1
+    return 0
 
 def check_C(k):
     global counter
     if len(k) != 3:
         print(
             f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
-        exit()
+        #exit()
+        return 1
+    
 
     if k[1] == "FLAGS" or k[2] == "FLAGS":
         print(f"Incorrect use of FLAGS register in line {counter}")
-        exit()
+        #exit()
+        return 1
 
     if k[1] not in R or k[2] not in R:
         print(f"Error: Incorrect Register name in line {counter}")
-        exit()
+        #exit()
+        return 1
+    return 0
 
 
 def check_D(k):
@@ -219,15 +242,20 @@ def check_D(k):
     if len(k) != 3:
         print(
             f"Error: Wrong instruction syntax for TYPE D register in line {counter}")
-        exit()
+        #exit()
+        return 1
+    
 
     if k[1] == "FLAGS":
         print(f"Incorrect use of FLAGS register in line {counter}")
-        exit()
+        #exit()
+        return 1
 
     if k[1] not in R:
         print(f"Error: Incorrect Register name in line {counter}")
-        exit()
+        #exit()
+        return 1
+    return 0
 
 
 def check_E(k):
@@ -236,7 +264,9 @@ def check_E(k):
 
         print(
             f"Error: Wrong instruction syntax for TYPE E register in line {counter}")
-        exit()
+        #exit()
+        return 1
+    return 0
 
 
 def check_F(k):
@@ -245,23 +275,29 @@ def check_F(k):
 
         print(
             f"Error: Wrong instruction syntax for TYPE F register in line {counter}")
-        exit()
+        #exit()
+        return  1
+    return 0
 
 
 c_hlt = 0
 counter = 0
 flag = 0
 check_hlt_after = 0
-
-
+l_result=[]
+l_cmd=[]
 def error_controller(k):
     global c_hlt
+    global l_cmd
     global counter
     global flag
     global check_hlt_after
+    global l_result
     if k[-1] == '\n':
         k = k[:-1]
+    
     l = k.strip().split(" ")
+    l_cmd.append(l[0])
     if l == ['']:
         return
     if (l[0] in O or l[0] == 'var' or l[0][-1] == ':'):
@@ -269,46 +305,58 @@ def error_controller(k):
         counter += 1
         if flag == 1 and l[0] == 'var':
             print(f"Var statement used after instruction at line {counter}")
-            exit()
-        (check_space(l))
+            #exit()
+        l_result.append(check_space(l))
 
         if l[0] == "mov":
             flag = 1
-            (check_mov(l))
+            l_result.append(check_mov(l))
         elif l[0] in O_A:
             flag = 1
-            (check_A(l))
+            l_result.append(check_A(l))
         elif l[0] in O_B:
             flag = 1
-            (check_B(l))
+            l_result.append(check_B(l))
 
         elif l[0] in O_C:
             flag = 1
-            (check_C(l))
+            l_result.append(check_C(l))
         elif l[0] in O_D:
             flag = 1
-            (check_D(l))
+            l_result.append(check_D(l))
         elif l[0] in O_E:
             flag = 1
-            (check_E(l))
+            l_result.append(check_E(l))
         elif l[0] in O_F:
             flag = 1
             c_hlt += 1
             if c_hlt == 1:
                 check_hlt_after = counter
-                (check_F(l))
+                l_result.append(check_F(l))
             elif c_hlt > 1:
+                l_result.append(1)
                 print("hlt operation used more than once")
-                exit()
+                #exit()
     else:
-        print("Incorrect operation")
+        counter+=1
+        print(f"Incorrect operation at {counter}")
+        l_result.append(1)
+    
+    return l_result
+    
 
 
 file = "test.txt"
 f = open(file, 'r')
 
+
 for line in f:
-    error_controller(line)
-file_work()
+    a=error_controller(line)
+
+if 'hlt'!=l_cmd[-1]:
+    print("hlt not the last command")
+    a.append(1)
+if 1 not in a:
+    file_work()
 f.close()
 
