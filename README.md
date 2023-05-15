@@ -1,5 +1,5 @@
 <pre>
-Please view this file in code section for better view.
+This is the CO project work.
 assembler.py is the main assembler file.
 Change the input file name from line no. 65 in     file =  "input_file_name.txt" 
 change the output file name from    out = open("output_file_name.txt","w")
