@@ -312,4 +312,3 @@ for line in f:
 file_work()
 f.close()
 
-print("hello world!")
