@@ -1,5 +1,5 @@
 <pre>
-This is the CO project work.
+This is the CO project work done in python language.
 assembler.py is the main assembler file.
 Change the input file name to file =  "input_file_name.txt" 
 change the output file name to out = open("output_file_name.txt","w")
