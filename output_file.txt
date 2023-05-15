@@ -1,0 +1,7 @@
+Error in Line 2: Invalid operand
+Error in Line 3: add must contain 3 parameters
+Error in Line 4: Register is not defined
+Error in Line 5: add must contain 3 parameters
+Error in Line 6: add must contain 3 parameters
+Error in Line 7: add must contain 3 parameters
+Error: No hlt instruction present
