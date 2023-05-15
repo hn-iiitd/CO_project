@@ -114,12 +114,12 @@ def file_work():
             pass
     f.close()
 
-    out.seek(0)
-    for i in out:
-        if i[-1] == '\n':
-            print(i[:-1])
-        else:
-            f2.write(i)
+    # out.seek(0)
+    # for i in out:
+    #     if i[-1] == '\n':
+    #         print(i[:-1])
+    #     else:
+    #         out.write(i+'\n')
     out.close()
 
 
@@ -396,7 +396,8 @@ def error_controller(k):
             elif c_hlt > 1:
                 l_result.append(1)
                 f2.write("hlt operation used more than once\n")
-                #exit()
+            
+            #exit()
 
     else:
         counter+=1
@@ -412,6 +413,7 @@ def check_hlt():
     
     elif 'hlt'!=l_cmd[-1]:
         f2.write("hlt not the last command\n")
+        exit()
         a.append(1)
 
 file = "test.txt"
@@ -419,9 +421,16 @@ f = open(file, 'r')
 f2=open('out.txt', 'w')
 
 for line in f:
+    
+            
     var(line)
+# print(l_var_def)
 f.seek(0)
 for line in f:
+    u = line.split(":")
+    if(len(u)>1):
+            if(len(u[1].split(" "))>2):
+                line = u[1].strip()
     a=error_controller(line)
 check_hlt()
 f2.close()
