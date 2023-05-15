@@ -119,7 +119,7 @@ def file_work():
         if i[-1] == '\n':
             print(i[:-1])
         else:
-            print(i)
+            f2.write(i)
     out.close()
 
 
@@ -127,154 +127,193 @@ l_result = []
 
 
 def check_space(k):
-    global counter
+    global counter,f2
     if '' in k:
-        print(f"Error: Extra space in line {counter}")
+        f2.write(f"Error: Extra space in line {counter}\n")
         return 1
     return 0
         #exit()
 
 
 def check_A(k):
-    global counter
+    global counter,f2
+    l_errors=[]
     if len(k) != 4:
-        print(
-            f"Error: Wrong instruction syntax for TYPE A register in line {counter}")
-        return 1
+        l_errors.append(f"Error: Wrong instruction syntax for TYPE A register in line {counter}")
     # return 0
         #exit()
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
-        print(f"Error: Incorrect Register name in line {counter}")
-        return 1
+        l_errors.append(f"Error: Incorrect Register name in line {counter}")
 
         #exit()
 
     if k[1] == "FLAGS" or k[2] == "FLAGS" or k[3] == "FLAGS":
-        print(f"Incorrect use of FLAGS register in line {counter}")
+        l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
         #exit()
+    if len(l_errors)==0:
+
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
         return 1
-    return 0
 
 
 def check_mov(k):
-    global counter
+    global counter,f2
+    l_errors=[]
     if k[-1][0] == '$':
+        if (len(str(bin(int(k[2][1:])))[2:]))>7:
+            l_errors.append(f"Illegal Immediate values (more than 7 bits) at line {counter}")
+          
         if len(k) != 3:
-            print(
-                f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
-            return 1
+            l_errors.append(f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
+        
             #exit()
 
         if k[1] == "FLAGS" or k[2] == "FLAGS":
-            print(f"Incorrect use of FLAGS register in line {counter}")
-            return 1
+            l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
+          
             #exit()
 
         if k[1] not in R:
-            print(f"Error: Incorrect Register name in line {counter}")
+            l_errors.append(f"Error: Incorrect Register name in line {counter}")
             #exit()
+            
+        if len(l_errors)==0:
+
+            return 0
+        else:
+            for i in l_errors:
+                f2.write(i+'\n')
             return 1
             
 
     else:
         if len(k) != 3:
-            print(
-                f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
+            l_errors.append(f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
             return 1
             #exit()
 
         if k[1] == "FLAGS":
-            print(f"Incorrect use of FLAGS register in line {counter}")
+            l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
             #exit()
             return 1
 
         if k[1] not in R or k[2] not in R:
-            print(f"Error: Incorrect Register name in line {counter}")
+            l_errors.append(f"Error: Incorrect Register name in line {counter}")
             #exit()
             return 1
+        if len(l_errors)==0:
+
+            return 0
+        else:
+            for i in l_errors:
+                f2.write(i+'\n')
+            return 1
         
-    return 0
+    # return 0
 
 
 def check_B(k):
-    global counter
+    global counter,f2
+    l_errors=[]
+    if (len(str(bin(int(k[2][1:])))[2:]))>7:
+        l_errors.append(f"Illegal Immediate values (more than 7 bits) at line {counter}")
+      
     if len(k) != 3:
-        print(
-            f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
+        l_errors.append(f"Error: Wrong instruction syntax for TYPE B register in line {counter}")
         #exit()
-        return 1
+       
 
     if (k[1] not in R or k[2] not in R or k[3] not in R):
-        print(f"Error: Incorrect Register name in line {counter}")
+        l_errors.append(f"Error: Incorrect Register name in line {counter}")
         #exit()
-        return 1
+    
 
     if k[1] == "FLAGS":
-        print(f"Incorrect use of FLAGS register in line {counter}")
+        l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
         #exit()
+
+    # if len(str(bin(int(k[2][1:])))[2:])>7:
+    #     print( f"Illegal Immediate values (more than 7 bits) at line {counter}")
+    #     return 1
+    if len(l_errors)==0:
+
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
         return 1
-    return 0
 
 def check_C(k):
-    global counter
+    global counter,f2
+    l_errors = []
     if len(k) != 3:
-        print(
-            f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
+        l_errors.append(f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
         #exit()
-        return 1
+
     
 
     if k[1] == "FLAGS" or k[2] == "FLAGS":
-        print(f"Incorrect use of FLAGS register in line {counter}")
+        l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
         #exit()
-        return 1
 
     if k[1] not in R or k[2] not in R:
-        print(f"Error: Incorrect Register name in line {counter}")
+        l_errors.append(f"Error: Incorrect Register name in line {counter}")
         #exit()
+    if len(l_errors)==0:
+
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
         return 1
-    return 0
 
 
 def check_D(k):
-    global counter
+    global counter,f2
+    l_errors=[]
     if len(k) != 3:
-        print(
-            f"Error: Wrong instruction syntax for TYPE D register in line {counter}")
+        l_errors.append(f"Error: Wrong instruction syntax for TYPE D register in line {counter}")
         #exit()
-        return 1
+
     
 
     if k[1] == "FLAGS":
-        print(f"Incorrect use of FLAGS register in line {counter}")
+        l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
         #exit()
-        return 1
+
 
     if k[1] not in R:
-        print(f"Error: Incorrect Register name in line {counter}")
+        l_errors.append(f"Error: Incorrect Register name in line {counter}")
         #exit()
+    if len(l_errors)==0:
+
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
         return 1
-    return 0
+
 
 
 def check_E(k):
-    global counter
+    global counter,f2
     if len(k) != 2:
 
-        print(
-            f"Error: Wrong instruction syntax for TYPE E register in line {counter}")
+        f2.write(f"Error: Wrong instruction syntax for TYPE E register in line {counter}\n")
         #exit()
         return 1
-    return 0
+    return 0 
 
 
 def check_F(k):
-    global counter
+    global counter,f2
     if (len(k) != 1):
 
-        print(
-            f"Error: Wrong instruction syntax for TYPE F register in line {counter}")
+        f2.write(f"Error: Wrong instruction syntax for TYPE F register in line {counter}\n")
         #exit()
         return  1
     return 0
@@ -297,54 +336,36 @@ def var(k):
     if l == ['']:
         return
     if (l[0] in O or l[0] == 'var' or l[0][-1] == ':'):
-        # if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je" :
-        #     l_var.append(l[1])
-        # elif l[0]=="ld" or l[0]=="st":
 
-        #     l_var.append(l[2])
         if l[0]=='var':
             l_var_def.append(l[1])
         elif l[0][-1]==':':
             l_var_def.append(l[0][:-1])
+# def check
 def check_var_def(k):    
-    global counter
+    global counter,f2
     if k not in l_var_def:
-        print(f"Error on line {counter}:Label not find ")
+        f2.write(f"Error on line {counter}:Label not find\n")
         return 1
     return 0
-    # for i in l_var_def:
-    #     if i!=k:
-
-        # if i not in l_var_def:
-        #     print("Label not defined")
-        #     a.append(1)
 def error_controller(k):
-    global c_hlt
-    global l_cmd
-    global counter
-    global flag
-    global check_hlt_after
-    global l_result
-    global l_var,l_var_def
+    global c_hlt,l_cmd,counter,flag,check_hlt_after,l_result,f2
     if k[-1] == '\n':
         k = k[:-1]
-    
     l = k.strip().split(" ")
     l_cmd.append(l[0])
     if l == ['']:
         return
     if (l[0] in O or l[0] == 'var' or l[0][-1] == ':'):
-
         counter += 1
         if flag == 1 and l[0] == 'var':
-            print(f"Var statement used after instruction at line {counter}")
+            f2.write(f"Var statement used after instruction at line {counter}\n")
             l_result.append(1)
             #exit()
         l_result.append(check_space(l))
         if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je" :
             l_result.append(check_var_def(l[1]))
         elif l[0]=="ld" or l[0]=="st":
-
             l_result.append(check_var_def(l[2]))
 
         if l[0] == "mov":
@@ -374,34 +395,39 @@ def error_controller(k):
                 l_result.append(check_F(l))
             elif c_hlt > 1:
                 l_result.append(1)
-                print("hlt operation used more than once")
+                f2.write("hlt operation used more than once\n")
                 #exit()
+
     else:
         counter+=1
-        print(f"Incorrect operation at {counter}")
-        l_result.append(1)
-    
+        f2.write(f"Incorrect operation at {counter}\n")
+        l_result.append(1)    
     return l_result
     
 def check_hlt():
-    if 'hlt'!=l_cmd[-1]:
-        print("hlt not the last command")
+    global f2
+    if 'hlt' not in l_cmd:
+        f2.write("hlt not used\n")
+        a.append(1)
+    
+    elif 'hlt'!=l_cmd[-1]:
+        f2.write("hlt not the last command\n")
         a.append(1)
 
 file = "test.txt"
 f = open(file, 'r')
+f2=open('out.txt', 'w')
 
 for line in f:
     var(line)
 f.seek(0)
 for line in f:
     a=error_controller(line)
-# print(list(set(l_var)))
-# print(list(set(l_var_def)))
 check_hlt()
-
+f2.close()
 
 if 1 not in a:
     file_work()
 f.close()
+
 

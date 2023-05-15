@@ -2,7 +2,6 @@ var X
 var Y
 var Z
 ld R1 X
-ls reg1 $13
 ld R2 Y
 st R3 Z
 jmp hlt_label
@@ -30,6 +29,7 @@ jmp label1
 var X
 label4:
 hlt
+
 label1:
 addf R1 R2 R3
 subf R1 R2 R3
