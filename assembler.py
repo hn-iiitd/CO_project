@@ -143,12 +143,12 @@ def check_A(k):
     # return 0
         #exit()
 
-    if (k[1] not in R or k[2] not in R or k[3] not in R):
+    elif (k[1] not in R or k[2] not in R or k[3] not in R):
         l_errors.append(f"Error: Incorrect Register name in line {counter}")
 
         #exit()
 
-    if k[1] == "FLAGS" or k[2] == "FLAGS" or k[3] == "FLAGS":
+    elif k[1] == "FLAGS" or k[2] == "FLAGS" or k[3] == "FLAGS":
         l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
         #exit()
     if len(l_errors)==0:
@@ -193,18 +193,18 @@ def check_mov(k):
     else:
         if len(k) != 3:
             l_errors.append(f"Error: Wrong instruction syntax for TYPE C register in line {counter}")
-            return 1
+           
             #exit()
 
         if k[1] == "FLAGS":
             l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
             #exit()
-            return 1
+         
 
         if k[1] not in R or k[2] not in R:
             l_errors.append(f"Error: Incorrect Register name in line {counter}")
             #exit()
-            return 1
+           
         if len(l_errors)==0:
 
             return 0

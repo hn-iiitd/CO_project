@@ -1,8 +1,10 @@
-Error on line 17:Label not find
-Error on line 18:Label not find
-Error: Incorrect Register name in line 21
-Error: Incorrect Register name in line 22
-Var statement used after instruction at line 29
-Incorrect operation at 33
-Incorrect operation at 34
-hlt not the last command
+Incorrect operation at 2
+Incorrect operation at 3
+Error on line 5:Label not find
+Incorrect operation at 7
+Var statement used after instruction at line 8
+Error: Incorrect Register name in line 9
+Incorrect operation at 10
+Incorrect operation at 14
+Error on line 15:Label not find
+Incorrect operation at 16

@@ -1,36 +1,17 @@
-var X
-var Y
-var Z
-ld R1 X
-ld R2 Y
-st R3 Z
-jmp hlt_label
-add R1 R2 R3
-hlt_label: hltvar var_name1
-add R1 R2 R3
-sub R1 R2 R3
-mov R1 $30
-mov R2 $15
-mov R3 $45
-mov R4 $25
-mov R1 R2
-ld R1 var_name2
-st R2 var_name1
-mul R1 R2 R3
-div R3 R4
-rs reg1 $12
-ls reg1 $13
-xor R1 R2 R3
-or R1 R2 R3
-and R1 R2 R3
-not R1 R2
-cmp R1 R2
-jmp label1
-var X
-label4:
+var xyz
+sub	R0 R1 R2
+mov	R0 $100
+mov R5 FLAGS
+ld R5 myvar
+mul R6 R1 R1
+div	R1 R3
+var abc
+rs R1 $2
+xor	R0 R1 R2		
+mylabel2: or R0 R1 R1
+and R0 R1 R2
+not R5 R1
+cmp	R1 R6
+jmp mylabel
+jlt	mylabel
 hlt
-
-label1:
-addf R1 R2 R3
-subf R1 R2 R3
-jmp label4
