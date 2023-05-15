@@ -337,13 +337,14 @@ def var(k):
 def check_var_def(k):
     global counter, f2
     if k[0] == "jmp" or k[0] == "jlt" or k[0] == "jgt" or k[0] == "je":
-        if k not in l_var_def:
+
+        if k[1] not in l_var_def:
 
             f2.write(
                 f"Error on line {counter}:No Label/variable name {k[1]}\n")
             return 1
     else:
-        if k not in l_var_def:
+        if k[2] not in l_var_def:
 
             f2.write(
                 f"Error on line {counter}:No such memory address named {k[2]} exist\n")
@@ -431,13 +432,14 @@ for line in f:
     var(line)
 
 f.seek(0)
-
+print(l_var_def)
 # for error checking
 for line in f:
     u = line.split(":")
     if (len(u) > 1):
-        if (len(u[1].split(" ")) > 2):
-            line = u[1].strip()
+        # print(u)
+        line=u[1].strip()
+    # print(line)
     a = error_controller(line)
 check_hlt()
 f2.close()
