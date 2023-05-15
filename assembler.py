@@ -286,6 +286,7 @@ flag = 0
 check_hlt_after = 0
 l_result=[]
 l_cmd=[]
+l_var=[]
 def error_controller(k):
     global c_hlt
     global l_cmd
@@ -293,6 +294,7 @@ def error_controller(k):
     global flag
     global check_hlt_after
     global l_result
+    global l_var
     if k[-1] == '\n':
         k = k[:-1]
     
@@ -307,6 +309,8 @@ def error_controller(k):
             print(f"Var statement used after instruction at line {counter}")
             #exit()
         l_result.append(check_space(l))
+        if l[0]=="jmp" or l[0]=="jlt" or l[0]=="jgt" or l[0]=="je":
+            l_var.append(l[1])
 
         if l[0] == "mov":
             flag = 1
@@ -356,6 +360,7 @@ for line in f:
 if 'hlt'!=l_cmd[-1]:
     print("hlt not the last command")
     a.append(1)
+
 if 1 not in a:
     file_work()
 f.close()
