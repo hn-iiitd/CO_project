@@ -1,3 +1,0 @@
-Error in Line 2: Register is not defined
-Error in Line 4: cmp must contain 2 parameters
-Error on line 6:No Label/variable name label1
