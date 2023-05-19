@@ -1,9 +1,7 @@
 <pre>
 This is the CO project work done in python language.
 assembler.py is the main assembler file.
-Change the input file name to file =  "input_file_name.txt" 
-change the output file name to out = open("output_file_name.txt","w")
-the assembler will read the code from input_file_name.txt and print the output in "output_file_name.txt".
+
 ---------------------------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------------------------
 
