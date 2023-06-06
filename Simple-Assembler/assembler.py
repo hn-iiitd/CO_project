@@ -1,17 +1,18 @@
 import os
 # Dictionaries for all types of instructions.
 R = {'R0': "000", 'R1': "001", 'R2': "010", "R3": "011", "R4": "100","R5": "101", "R6": "110", "FLAGS": "111"}  # Register numbers
-O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100", "addf": "10000" , "subf": "10001" }    # Labelling operations in A
+O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100", "addf": "10000" , "subf": "10001", "addf": "10000" , "subf": "10001" }    # Labelling operations in A
 O_B = {"mov": "00010", "rs": "01000", "ls": "01001", "movf": "10010"}                                                    # Labelling operations in B
 O_C = {"mov": "00011", "div": "00111", "not": "01101", "cmp": "01110"}                                  # Labelling operations in C
 O_D = {"ld": "00100", "st": "00101"}                                                                    # Labelling operations in D
 O_E = {"jmp": "01111", "jlt": "11100", "jgt": "11101", "je": "11111"}                                   # Labelling operations in E
-O_F = {"hlt": "11010"}       
+O_F = {"hlt": "11010"}    
+O_G = {"movf": "10010"}      
 # O_bonus={'reset':'10011','nop':'10100','inc':'10101','dec':'10110','addi':'10111'}         
 O_nop_reset={'reset':'10011','nop':'10100'}
 O_inc_dec={'inc':'10101','dec':'10110'}                                                                  # Labelling operations in F
 O_add_imm={'addi':'10111'}
-O = ["reset","nop","inc","dec","addi","add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"]
+O = ["reset","nop","inc","dec","addi","add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG","addf", "subf", "movf"]
 variables = {}
 c_hlt = 0
 counter = 0
@@ -26,6 +27,44 @@ def add(r1, r2):
     sum = bin(int(r1) + int(r2))
     return sum[2:]
 vl = []
+
+def float_to_bin(a):
+    
+    l=a.split(".")
+    q=bin(int(l[0]))
+    q=q[2:]
+
+    
+    d=float('0.'+l[1])
+    g=q[1:]
+    while(d!=0):
+        d=d*2
+        e=str(d)
+        
+        l1=e.split(".")
+        g+=l1[0]
+        d=float('0.'+l1[1])
+    
+    d=str(d)
+    x=0
+    x=len(q[1:])+3
+    if len(g)<5:
+
+        for i in range(5-len(g)):
+            g+='0'
+
+    x=str(bin(x))
+    x=x[2:]
+
+    c=l[0][1:]+l[1]
+    if len(x)<3:
+        j=''
+        for i in range(3-len(x)):
+            j+='0'
+        j+=x
+        return j+g
+    else:
+        return x+g
 
 # Function to convert Type A command to machine code
 def convert_OA(a):
@@ -91,7 +130,17 @@ def convert_O_inc_dec(a):
         return x+8*'0'
     if a in R:
         return R[a]
-    
+def convert_OG(a) :
+    if (a in O_G.keys()):
+        x = O_G[a]  # Unused BITS
+        return x
+    if (a in R):
+        return R[a]
+    else:
+        a = a.replace("\n", "")
+        a = a.replace("$", "")
+        
+        return float_to_bin(a)
 
 def variable_maker():
     global counter
@@ -132,6 +181,7 @@ def variable_maker():
                     variables[l[1]] = add(int(vl[-1],2), 1)
                     variables[l[1]] = "0"*(7-len(variables[l[1]])) + variables[l[1]]
                     vl.append(variables[l[1]])
+    
 
 # Reading instructions from file and giving machine code in the output file
 def file_work():
@@ -190,6 +240,11 @@ def file_work():
         elif l[0] in O_nop_reset:
             out.write(convert_O_nop_reset(l[0]))
             out.write('\n')
+        elif l[0] in O_G.keys() and l[2][0] == '$':
+            out.write(convert_OG(l[0]))
+            out.write(convert_OG(l[1]))
+            out.write(convert_OG(l[2]))
+            out.write("\n")
         else:
             pass
     f.close()
@@ -226,7 +281,29 @@ def check_A(k):
         for i in l_errors:
             f2.write(i+'\n')
         return 1
-
+def check_OG(k):
+    global counter, f2
+    l_errors = []
+    if (len(str(bin(int(k[2][1:])))[2:])) > 8:
+            l_errors.append(
+                f"Illegal Immediate values (more than 8 bits) at line {counter}")
+    if len(k) != 3:
+            l_errors.append(
+                f"Error in Line {counter}: {k[0]} must contain 2 parameters")
+    else:
+            if k[1] == "FLAGS" or k[2] == "FLAGS":
+                l_errors.append(
+                    f"Incorrect use of FLAGS register in line {counter}")
+            if k[1] not in R:
+                l_errors.append(
+                    f"Error in Line {counter}: Register is not defined")
+    if len(l_errors) == 0:
+            return 0
+    else:
+            for i in l_errors:
+                f2.write(i+'\n')
+            return 1
+    
 # Check for errors in mov statements
 def check_mov(k):
     global counter, f2
@@ -459,6 +536,9 @@ def error_controller(k):
         elif l3[0] in O_A:
             flag = 1
             l_result.append(check_A(l3))
+        elif l3[0] in O_G:
+            flag=1
+            l_result.append(check_OG(l3))
         elif l3[0] in O_B:
             flag = 1
             l_result.append(check_B(l3))
