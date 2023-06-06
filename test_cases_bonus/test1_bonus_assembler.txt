@@ -1,0 +1,6 @@
+addi R3 $10
+nop
+reset
+inc R3
+dec R4
+hlt
