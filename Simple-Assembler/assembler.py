@@ -1,13 +1,17 @@
 import os
 # Dictionaries for all types of instructions.
 R = {'R0': "000", 'R1': "001", 'R2': "010", "R3": "011", "R4": "100","R5": "101", "R6": "110", "FLAGS": "111"}  # Register numbers
-O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100"}    # Labelling operations in A
-O_B = {"mov": "00010", "rs": "01000", "ls": "01001"}                                                    # Labelling operations in B
+O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100", "addf": "10000" , "subf": "10001" }    # Labelling operations in A
+O_B = {"mov": "00010", "rs": "01000", "ls": "01001", "movf": "10010"}                                                    # Labelling operations in B
 O_C = {"mov": "00011", "div": "00111", "not": "01101", "cmp": "01110"}                                  # Labelling operations in C
 O_D = {"ld": "00100", "st": "00101"}                                                                    # Labelling operations in D
 O_E = {"jmp": "01111", "jlt": "11100", "jgt": "11101", "je": "11111"}                                   # Labelling operations in E
-O_F = {"hlt": "11010"}                                                                                  # Labelling operations in F
-O = ["add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"]
+O_F = {"hlt": "11010"}       
+# O_bonus={'reset':'10011','nop':'10100','inc':'10101','dec':'10110','addi':'10111'}         
+O_nop_reset={'reset':'10011','nop':'10100'}
+O_inc_dec={'inc':'10101','dec':'10110'}                                                                  # Labelling operations in F
+O_add_imm={'addi':'10111'}
+O = ["reset","nop","inc","dec","addi","add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"]
 variables = {}
 c_hlt = 0
 counter = 0
@@ -16,7 +20,7 @@ check_hlt_after = 0
 l_result = []
 l_cmd = []
 l_var = []
-l_var_def = []
+l_var_def = [] 
 
 def add(r1, r2):
     sum = bin(int(r1) + int(r2))
@@ -64,6 +68,31 @@ def convert_OD(a):
         return x
     else:
         return variables[a]
+    
+def convert_O_nop_reset(a):
+    if (a in O_nop_reset.keys()):
+        
+        x=O_nop_reset[a]
+        return x+'0'*(16-5)
+def convert_O_add_imm(a):
+    if (a in O_add_imm.keys()):
+        x=O_add_imm[a]+'0'
+        return x
+    if a in R:
+        return R[a]
+    else:
+        a=a.replace('\n', '').replace("$", '')
+        num=str(bin(int(a)))[2:]
+        x='0'*(7-len(num))+num
+        return x
+def convert_O_inc_dec(a):
+    if a in O_inc_dec:
+        x=O_inc_dec[a]
+        return x+8*'0'
+    if a in R:
+        return R[a]
+    
+
 def variable_maker():
     global counter
     tot=0
@@ -148,6 +177,19 @@ def file_work():
             out.write("\n")
         elif l[0] in O_F.keys():
             out.write(O_F[l[0]] + "0" * 11)
+        elif l[0] in O_add_imm:
+            out.write(convert_O_add_imm(l[0]))
+            out.write(convert_O_add_imm(l[1]))
+            l[2] = l[2].replace("\n", "")
+            out.write(convert_O_add_imm(l[2]))
+            out.write('\n')
+        elif l[0] in O_inc_dec:
+            out.write(convert_O_inc_dec(l[0]))
+            out.write(convert_O_inc_dec(l[1]))
+            out.write('\n')
+        elif l[0] in O_nop_reset:
+            out.write(convert_O_nop_reset(l[0]))
+            out.write('\n')
         else:
             pass
     f.close()
@@ -302,6 +344,49 @@ def check_E(k):
         f2.write(f"Error in Line {counter}: {k[0]} must contain 1 parameters\n")
         return 1
     return 0
+def check_nop_reset(k):
+    global counter, f2
+    if len(k) != 1:
+        f2.write(f"Error in Line {counter}: {k[0]} must contain 0 parameters\n")
+        return 1
+    return 0
+
+def check_inc_dec(k):
+    global counter, f2
+    l_errors=[]
+    if len(k)!=2:
+        l_errors.append(f"Error in Line {counter}: {k[0]} must contain 1 parameters\n")
+    else:
+        if k[1]=="FLAGS":
+            l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
+        if k[1] not in R:
+            l_errors.append(f"Error in Line {counter}: Register is not defined")
+    if len(l_errors) == 0:
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
+        return 1
+def check_add_imm(k):
+    global counter,f2
+    l_errors=[]
+    if (len(str(bin(int(k[2][1:])))[2:])) > 7:
+        l_errors.append(
+            f"Illegal Immediate values (more than 7 bits) at line {counter}")
+    if len(k)!=3:
+        l_errors.append(f"Error in Line {counter}: {k[0]} must contain 2 parameters\n")
+    else:
+        if k[1]=='FLAGS':
+            l_errors.append(f"Incorrect use of FLAGS register in line {counter}")
+        if k[1] not in R:
+            l_errors.append(f"Error in Line {counter}: Register is not defined")
+        
+    if len(l_errors) == 0:
+        return 0
+    else:
+        for i in l_errors:
+            f2.write(i+'\n')
+        return 1
 
 # Check for errors in TYPE F statements
 def check_F(k):
@@ -309,6 +394,7 @@ def check_F(k):
     if (len(k) != 1):
         f2.write(f"Error in Line {counter}: {k[0]} must contain no parameters\n")
         return 1
+    
     return 0
 
 def var(k):
@@ -394,6 +480,15 @@ def error_controller(k):
             elif c_hlt > 1:
                 l_result.append(1)
                 f2.write("hlt operation used more than once\n")
+        elif l3[0] in O_add_imm:
+            flag = 1
+            l_result.append(check_add_imm(l3))
+        elif l3[0] in O_inc_dec:
+            flag = 1
+            l_result.append(check_inc_dec(l3))
+        elif l3[0] in O_nop_reset:
+            flag = 1
+            l_result.append(check_nop_reset(l3))
     else:
         counter += 1
         f2.write(f"Error in Line {counter}: Invalid operand\n")
