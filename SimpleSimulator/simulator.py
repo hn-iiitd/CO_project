@@ -145,7 +145,7 @@ while(j<i):
                 Flags['V'] = 1
                 R[Reg[k[j][6:9]]] = '0'*16
             else:
-                R[Reg[k[j][6:9]]] = str('{0:016b}'.format(add(R[Reg[k[j][6:9]]],R[Reg[k[j][9:16]]])))
+                R[Reg[k[j][6:9]]] = str('{0:016b}'.format(add(R[Reg[k[j][6:9]]],k[j][9:16])))
                 flags_to_display['V'] = 0
                 Flags['V'] = 0
         if c=='inc':
@@ -158,7 +158,7 @@ while(j<i):
                 flags_to_display['V'] = 0
                 Flags['V'] = 0
         if c=='dec':
-            if int('0'*15 + '1',2) > int(k[j][13:16],2):
+            if int('0'*15 + '1',2) -int(k[j][13:16],2) <0:
                 flags_to_display['V'] = 1
                 Flags['V'] = 1
                 R[Reg[k[j][6:9]]] = '0'*16
@@ -169,8 +169,8 @@ while(j<i):
         if c=='nop':
             pass  
         if c=='reset':
-            for i in R:
-                R[i] = '0'*16
+            for hahs in R:
+                R[hahs] = '0'*16
     if c in O_A :            
         if c=='add':
             if add(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2**16 :
@@ -293,6 +293,9 @@ while(j<i):
         reset_flags(Flags)
 
     elif c in O_F:
+        reset_flags(Flags)
+        reset_flags(flags_to_display)
+
         final[w] = str('{0:07b}'.format(j))+7*" " + " " + R["R0"]+ " " +R["R1"]+" " +R["R2"]+ " " +R["R3"]+" " +R["R4"]+" " +R["R5"] + " " +R["R6"] + ' ' + '0'*12 + str(flags_to_display['V']) + str(flags_to_display['L']) + str(flags_to_display["G"]) + str(flags_to_display['E'])
         break    
         
