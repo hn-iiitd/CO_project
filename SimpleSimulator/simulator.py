@@ -1,5 +1,7 @@
+#importing modules
 import os
 import sys
+
 O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100", "addf": "10000" , "subf": "10001"}    # Labelling operations in A
 O_B = {"movB": "00010", "rs": "01000", "ls": "01001"}                                                    # Labelling operations in B
 O_C = {"movC": "00011", "div": "00111", "not": "01101", "cmp": "01110"}                                  # Labelling operations in C
