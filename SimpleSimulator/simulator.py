@@ -1,12 +1,14 @@
 import os
+import sys
 O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100"}    # Labelling operations in A
 O_B = {"movB": "00010", "rs": "01000", "ls": "01001"}                                                    # Labelling operations in B
 O_C = {"movC": "00011", "div": "00111", "not": "01101", "cmp": "01110"}                                  # Labelling operations in C
 O_D = {"ld": "00100", "st": "00101"}                                                                    # Labelling operations in D
 O_E = {"jmp": "01111", "jlt": "11100", "jgt": "11101", "je": "11111"}                                   # Labelling operations in E
 O_F = {"hlt": "11010"}                                                                                  # Labelling operations in F
-O = {"add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG"}
-O_check = { "11010":"hlt","01111":"jmp",  "11100":"jlt",  "11101":"jgt",  "11111":"je", "00100":"ld" ,  "00101":"st","00011":"movC",  "00111":"div",  "01101":"not", "01110" :"cmp","00010":"movB", "01000":"rs",  "01001":"ls","00000":"add",  "00001":"sub", "00110":"mul" , "01010":"xor","01011":"or" , "01100":"and" }    # Labelling operations in A
+O = {"add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG","dec","inc","nop","reset","addi"}
+O_check = { "11010":"hlt","01111":"jmp",  "11100":"jlt",  "11101":"jgt",  "11111":"je", "00100":"ld" ,  "00101":"st","00011":"movC",  "00111":"div",  "01101":"not", "01110" :"cmp","00010":"movB", "01000":"rs",  "01001":"ls","00000":"add",  "00001":"sub", "00110":"mul" , "01010":"xor","01011":"or" , "01100":"and" ,"10111":'addi',"10100":'nop',"10011":"reset","10101":"inc","10110":"dec"} 
+O_extra = {'addi':"10111",'nop':'10100',"reset":'10011',"inc":"10101","dec":"10110"}
 final = {}
 def find_from_dict(val,dict):
     for i in dict.keys():
@@ -32,7 +34,6 @@ Reg = {'000' : 'R0',
 '110' : 'R6',
 '111' : 'FLAGS'
 }
-# print(Reg['111'])
 var= {} #st and ld
 Flags = {
     'V':0 ,'L':0, 'G':0, 'E':0
@@ -52,6 +53,8 @@ def add(r1, r2):
 def sub(r1, r2):
     sum = (int(r1,2) - int(r2,2))
     return sum
+
+
 def mul(r1, r2):
     sum = (int(r1,2)*int(r2,2))
     return sum
@@ -59,6 +62,7 @@ def div(r1, r2):
     rem = '{0:016b}'.format(int(int(r1,2)%int(r2,2)))
     quo = '{0:016b}'.format(int(int(r1,2)/int(r2,2)))
     return rem,quo
+
 def xor(r1, r2):
     r1 = str(r1)
     r2 = str(r2)
@@ -71,6 +75,9 @@ def xor(r1, r2):
             r3.append(str(1))
     r3 = "".join(r3)
     return r3
+
+
+
 def orr(r1,r2):
     r1 =str(r1)    
     r2 =str(r2)  
@@ -84,6 +91,7 @@ def orr(r1,r2):
             r3.append(str(0))
     r3 = "".join(r3)
     return r3
+
 def reset_flags(Flags):
     Flags['V'] = 0
     Flags['E'] = 0
@@ -113,6 +121,10 @@ while True:
     except EOFError:
         break
 f.close()
+# f=open(file_out,'w')
+# for i in sys.stdin():
+#     f.
+# f.close()
 f = open(file_in,'r')
 i=0
 for line in f:
@@ -126,16 +138,49 @@ j = 0  #pc
 w = 0  #writer count
 while(j<i):
     c = O_check[k[j][0:5]]
-    # print(c,k[j][0:5],sep='        ')
+    if c in O_extra:
+        if c== 'addi':
+            if add(R[Reg[k[j][6:9]]],k[j][9:16]) >=2**16 :
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
+                R[Reg[k[j][6:9]]] = '0'*16
+            else:
+                R[Reg[k[j][6:9]]] = str('{0:016b}'.format(add(R[Reg[k[j][6:9]]],R[Reg[k[j][9:16]]])))
+                flags_to_display['V'] = 0
+                Flags['V'] = 0
+        if c=='inc':
+            if add('0'*15 + '1',k[j][13:16]) >=2**16 :
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
+                R[Reg[k[j][6:9]]] = '0'*16
+            else:
+                R[Reg[k[j][13:16]]] = str('{0:016b}'.format(add('0'*15 + '1',R[Reg[k[j][13:16]]])))
+                flags_to_display['V'] = 0
+                Flags['V'] = 0
+        if c=='dec':
+            if int('0'*15 + '1',2) > int(k[j][13:16],2):
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
+                R[Reg[k[j][6:9]]] = '0'*16
+            else:
+                R[Reg[k[j][13:16]]] = str('{0:016b}'.format(sub(R[Reg[k[j][13:16]]],'0'*15 + '1')))
+                flags_to_display['V'] = 0
+                Flags['V'] = 0    
+        if c=='nop':
+            pass  
+        if c=='reset':
+            for i in R:
+                R[i] = '0'*16
     if c in O_A :            
         if c=='add':
-            if add(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2^16 :
+            if add(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2**16 :
                 flags_to_display['V'] = 1
                 Flags['V'] = 1
                 R[Reg[k[j][7:10]]] = '0'*16
             else:
                 R[Reg[k[j][7:10]]] = str('{0:016b}'.format(add(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])))
-        R[Reg["111"]] = 12*'0' + str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
+                flags_to_display['V'] = 0
+                Flags['V'] = 0
         if c=='sub':
             if int(R[Reg[k[j][10:13]]],2)<int(R[Reg[k[j][13:16]]],2) :
                 flags_to_display['V'] = 1
@@ -143,14 +188,17 @@ while(j<i):
                 R[Reg[k[j][7:10]]] = '0'*16
             else:
                 R[Reg[k[j][7:10]]] = str('{0:016b}'.format(sub(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])))
+                flags_to_display['V'] = 0
+                Flags['V'] = 0
         if c=='mul':
             if mul(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2**16 -1:
                 flags_to_display['V'] = 1
                 Flags['V'] = 1
                 R[Reg[k[j][7:10]]] = '0'*16
             else:
+                flags_to_display['V'] = 0
+                Flags['V'] = 0
                 R[Reg[k[j][7:10]]] = str('{0:016b}'.format(mul(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])))
-        R[Reg["111"]] = 12*'0' + str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
 
         if c=='xor':
             R[Reg[k[j][7:10]]]= xor(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])
@@ -166,9 +214,10 @@ while(j<i):
             reset_flags(Flags)
             reset_flags(flags_to_display)
 
+        R[Reg["111"]] = 12*'0' + str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
 
     elif c in O_B:
-        if c == 'movB':# and k[j][0:5] == '00010':
+        if c == 'movB' and k[j][0:5] == '00010':
             R[Reg[k[j][6:9]]] = str('{0:016b}'.format(int(str([k[j][9:16]][0]),2)))
         if c == 'rs':
             R[Reg[k[j][6:9]]] = str('{0:016b}'.format(int(R[Reg[k[j][6:9]]],2)>>int([k[j][9:16]],2)))
@@ -178,9 +227,8 @@ while(j<i):
         reset_flags(flags_to_display)
 
     elif c in O_C:
-        if c=='movC':
+        if c=='movC' and k[j][0:5] == '00011' :
             R[Reg[k[j][10:13]]] = str('{0:016b}'.format(int(R[Reg[k[j][13:16]]],2)))
-        
             reset_flags(Flags)
             reset_flags(flags_to_display)
 
@@ -193,15 +241,14 @@ while(j<i):
                 R['R0'] = '0'*16
             else:
                 R['R1'] , R['R0'] = div(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])
-        R[Reg["111"]] = 12*'0' + str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
-
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
         if c== 'not':
             R[Reg[k[j][10:13]]] = str('{0:016b}'.format(~int(R[Reg[[k[j][13:16]]]],2)))
             reset_flags(Flags)
             reset_flags(flags_to_display)
 
         if c== 'cmp':
-            
             if(int(R[Reg[k[j][10:13]]],2) < int(R[Reg[k[j][13:16]]],2)):
                 flags_to_display['L'] = 1;
                 Flags["L"] = 1
@@ -211,13 +258,13 @@ while(j<i):
             elif(int(R[Reg[k[j][10:13]]],2) > int(R[Reg[k[j][13:16]]],2)):
                 flags_to_display['G'] = 1;
                 Flags["G"] = 1
-            R[Reg["111"]] = 12*'0' +str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
+        R[Reg["111"]] = 12*'0' +str(Flags['V']) + str(Flags['L']) + str(Flags["G"]) + str(Flags['E']);
 
     elif c in O_D:
         if c=='ld' and k[j][0:5] == '00100':
             if(k[j][9:16] not in var.keys()):
                 var[k[j][9:16]] = '0'*16
-            R[Reg[k[j][6:9]]] = var[k[j][9:16]]
+            R[Reg[k[j][6:9]]] = var[k[j][9:16]] 
         elif c=='st' and k[j][0:5]=='00101':
             var[k[j][9:16]] = R[Reg[k[j][6:9]]]
         reset_flags(Flags)
@@ -246,9 +293,9 @@ while(j<i):
         reset_flags(Flags)
 
     elif c in O_F:
-        
         final[w] = str('{0:07b}'.format(j))+7*" " + " " + R["R0"]+ " " +R["R1"]+" " +R["R2"]+ " " +R["R3"]+" " +R["R4"]+" " +R["R5"] + " " +R["R6"] + ' ' + '0'*12 + str(flags_to_display['V']) + str(flags_to_display['L']) + str(flags_to_display["G"]) + str(flags_to_display['E'])
-        break        
+        break    
+        
     final[w] = str('{0:07b}'.format(j)) + 7*" " + " " + R["R0"]+ " " +R["R1"]+" " +R["R2"]+ " " +R["R3"]+" " +R["R4"]+" " +R["R5"] + " " +R["R6"]+ ' ' + '0'*12 + str(flags_to_display['V']) +str(flags_to_display['L']) + str(flags_to_display["G"]) + str(flags_to_display['E'])
     if(len(pc_jmp)!=0):
         j = pc_jmp.pop()
