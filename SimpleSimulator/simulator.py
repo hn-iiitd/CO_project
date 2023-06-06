@@ -113,26 +113,14 @@ def andd(r1,r2):
 
 file_in = "input.txt" #input file change it to stdin
 file_out = "out.txt"
-f=open(file_in,'w')
-while True:
-    try:
-        a=input()
-        f.write(a+'\n')
-    except EOFError:
-        break
-f.close()
-# f=open(file_out,'w')
-# for i in sys.stdin():
-#     f.
-# f.close()
-f = open(file_in,'r')
 i=0
-for line in f:
-    line = line.replace("\n", "")
+s=sys.stdin.read()
+if s[-1]=='\n':
+    s=s[:-1]
+l=s.split('\n')
+for line in l:
     k[i]=line
     i+=1
-f.close()
-# print(k)
 m = i-1 #total no. of instructions in dict
 j = 0  #pc
 w = 0  #writer count
@@ -326,5 +314,4 @@ o.seek(0)
 for i in o:
     print(i)
 o.close()
-os.remove(file_in)
 os.remove(file_out)
