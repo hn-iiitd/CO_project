@@ -1,13 +1,14 @@
 import os
 import sys
-O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100"}    # Labelling operations in A
+O_A = {"add": "00000", "sub": "00001", "mul": "00110", "xor": "01010","or": "01011", "and": "01100", "addf": "10000" , "subf": "10001"}    # Labelling operations in A
 O_B = {"movB": "00010", "rs": "01000", "ls": "01001"}                                                    # Labelling operations in B
 O_C = {"movC": "00011", "div": "00111", "not": "01101", "cmp": "01110"}                                  # Labelling operations in C
 O_D = {"ld": "00100", "st": "00101"}                                                                    # Labelling operations in D
 O_E = {"jmp": "01111", "jlt": "11100", "jgt": "11101", "je": "11111"}                                   # Labelling operations in E
-O_F = {"hlt": "11010"}                                                                                  # Labelling operations in F
-O = {"add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG","dec","inc","nop","reset","addi"}
-O_check = { "11010":"hlt","01111":"jmp",  "11100":"jlt",  "11101":"jgt",  "11111":"je", "00100":"ld" ,  "00101":"st","00011":"movC",  "00111":"div",  "01101":"not", "01110" :"cmp","00010":"movB", "01000":"rs",  "01001":"ls","00000":"add",  "00001":"sub", "00110":"mul" , "01010":"xor","01011":"or" , "01100":"and" ,"10111":'addi',"10100":'nop',"10011":"reset","10101":"inc","10110":"dec"} 
+O_F = {"hlt": "11010"}       
+O_G = {"movf": "10010"}                                                                             # Labelling operations in F
+O = {"add", "sub", "mul", "xor", "or", "and", "mov", "rs", "ls", "div","not", "cmp", "ld", "st", "jmp", "jlt", "jgt", "je", "hlt", "FLAG","dec","inc","nop","reset","addi","addf","subf","movf"}
+O_check = { "11010":"hlt","01111":"jmp",  "11100":"jlt",  "11101":"jgt",  "11111":"je", "00100":"ld" ,  "00101":"st","00011":"movC",  "00111":"div",  "01101":"not", "01110" :"cmp","00010":"movB", "01000":"rs",  "01001":"ls","00000":"add",  "00001":"sub", "00110":"mul" , "01010":"xor","01011":"or" , "01100":"and" ,"10111":'addi',"10100":'nop',"10011":"reset","10101":"inc","10110":"dec", "10000":"addf" , "10001":"subf" , "movf":"10010"} 
 O_extra = {'addi':"10111",'nop':'10100',"reset":'10011',"inc":"10101","dec":"10110"}
 final = {}
 def find_from_dict(val,dict):
@@ -43,17 +44,92 @@ flags_to_display = {
 }
 k={}
 pc_jmp = []
+
+def binary_to_float(a):
+    a1=a[0:3]
+    a2=a[3:]
+    exp=int(a1,2)-3
+    
+    a3=a2[exp:]
+    a4=a2[:exp]
+    d='1'+a4
+    d=str(int(d,2))
+    
+    e=0
+    for i in range(len(a3)):
+        e+=int(a3[i])*2**-(i+1)
+    
+    return str(int(d)+e)
+
+def float_to_bin(a):
+    
+    l=a.split(".")
+    q=bin(int(l[0]))
+    q=q[2:]
+
+    
+    d=float('0.'+l[1])
+    g=q[1:]
+    while(d!=0):
+        d=d*2
+        e=str(d)
+        # print(e)
+        l1=e.split(".")
+        g+=l1[0]
+        d=float('0.'+l1[1])
+    
+    d=str(d)
+    x=0
+    x=len(q[1:])+3
+    if len(g)<5:
+
+        for i in range(5-len(g)):
+            g+='0'
+
+    x=str(bin(x))
+    x=x[2:]
+
+    c=l[0][1:]+l[1]
+    if len(x)<3:
+        j=''
+        for i in range(3-len(x)):
+            j+='0'
+        j+=x
+        return j+g
+    else:
+        return x+g
+
+
+
+
 #functions for add,sub,moveR,moveI,mul,div,etc
 
 def add(r1, r2):
     sum = int(r1,2) + int(r2,2) 
     return sum
 
+def addf(r1,r2):
+    r1=r1[8:]
+    r2=r2[8:]
+    sum = binary_to_float(r1) + binary_to_float(r2)
+    return sum
+def addf2(r1,r2):
+    r1=r1[8:]
+    r2=r2[8:]
+    sum = binary_to_float(r1) + binary_to_float(r2)
+
+    return float_to_bin(sum)
 
 def sub(r1, r2):
     sum = (int(r1,2) - int(r2,2))
     return sum
 
+def subf(r1,r2):
+    r1=r1[8:]
+    r2=r2[8:]
+    sum = binary_to_float(r1) - binary_to_float(r2)
+
+    return float_to_bin(sum)
 
 def mul(r1, r2):
     sum = (int(r1,2)*int(r2,2))
@@ -127,6 +203,7 @@ w = 0  #writer count
 while(j<i):
     c = O_check[k[j][0:5]]
     if c in O_extra:
+        
         if c== 'addi':
             if add(R[Reg[k[j][6:9]]],k[j][9:16]) >=2**16 :
                 flags_to_display['V'] = 1
@@ -159,7 +236,21 @@ while(j<i):
         if c=='reset':
             for hahs in R:
                 R[hahs] = '0'*16
-    if c in O_A :            
+    if c in O_A :   
+        if c=='addf':
+            if addf(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2^16 :
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
+                R[Reg[k[j][7:10]]] = '0'*16
+            else:
+                R[Reg[k[j][7:10]]] ='00000000'+ addf2(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])
+        if c=='subf':
+            if binary_to_float(R[Reg[k[j][10:13]]][8:])<binary_to_float(R[Reg[k[j][13:16]]][8:]) :
+                flags_to_display['V'] = 1
+                Flags['V'] = 1
+                R[Reg[k[j][7:10]]] = '0'*16
+            else:
+                R[Reg[k[j][7:10]]] ='00000000'+ subf(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])         
         if c=='add':
             if add(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2**16 :
                 flags_to_display['V'] = 1
@@ -292,6 +383,9 @@ while(j<i):
         j = pc_jmp.pop()
         
         w+=1
+    elif c in O_G:
+        
+        R[Reg[k[j][5:8]]]='00000000' + float_to_bin(R[Reg[k[j][8:]]])
     else:
         j+=1
         w+=1
