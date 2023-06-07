@@ -240,12 +240,12 @@ while(j<i):
                 R[hahs] = '0'*16
     if c in O_A :   
         if c=='addf':
-            if addf(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2^16 :
+            if addf(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]]) >=2^16 :      # Checking the overflow condition
                 flags_to_display['V'] = 1
                 Flags['V'] = 1
                 R[Reg[k[j][7:10]]] = '0'*16
             else:
-                R[Reg[k[j][7:10]]] ='00000000'+ addf2(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])
+                R[Reg[k[j][7:10]]] ='00000000'+ addf2(R[Reg[k[j][10:13]]],R[Reg[k[j][13:16]]])    # Adding the numbers
         if c=='subf':
             if binary_to_float(R[Reg[k[j][10:13]]][8:])<binary_to_float(R[Reg[k[j][13:16]]][8:]) :
                 flags_to_display['V'] = 1
